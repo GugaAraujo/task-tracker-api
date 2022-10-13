@@ -1,5 +1,5 @@
 import { Service, ServiceBroker, Context } from 'moleculer';
-import IProject from './@types/project';
+import IProject from '../@types/project';
 
 export default class ProjectService extends Service {
     public constructor(broker: ServiceBroker) {

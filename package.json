@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc --build tsconfig.json",
-    "dev": "ts-node ./node_modules/moleculer/bin/moleculer-runner.js --hot --config moleculer.config.ts *.service.ts",
+    "dev": "ts-node ./node_modules/moleculer/bin/moleculer-runner.js --hot --config moleculer.config.ts **/*.service.ts",
     "start": "moleculer-runner"
   },
   "author": "",

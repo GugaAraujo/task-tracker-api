@@ -1,5 +1,5 @@
 import { ServiceBroker, Service, Context } from 'moleculer';
-import ITask from './@types/task';
+import ITask from '../@types/task';
 
 export default class TaskService extends Service {
     public constructor(broker: ServiceBroker) {
