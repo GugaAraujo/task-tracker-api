@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc --build tsconfig.json",
-    "dev": "ts-node ./node_modules/moleculer/bin/moleculer-runner.js --hot --config moleculer.config.ts **/*.service.ts",
+    "dev": "ts-node ./node_modules/moleculer/bin/moleculer-runner.js -e --hot --config moleculer.config.ts **/*.service.ts",
     "start": "moleculer-runner"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "moleculer": "^0.14.24",
     "moleculer-web": "^0.10.4"
   },
