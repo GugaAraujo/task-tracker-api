@@ -1,5 +1,6 @@
 import { Service, ServiceBroker, Context } from 'moleculer';
-import IProject from '../@types/project';
+import { Project } from '../data';
+import { IProject } from '../models/project';
 
 export default class ProjectService extends Service {
     public constructor(broker: ServiceBroker) {
@@ -14,30 +15,13 @@ export default class ProjectService extends Service {
                         path: '/'
                     },
                     async handler(): Promise<IProject> {
-                        return this.getProjects();
+                        return await this.getProjects();
                     }
                 }
             },
             methods: {
-                getProjects(): IProject[] {
-                    return [
-                        {
-                            name: 'Backend',
-                            id: 1
-                        },
-                        {
-                            name: 'Frontend',
-                            id: 2
-                        },
-                        {
-                            name: 'Database',
-                            id: 3
-                        },
-                        {
-                            name: 'Fullstack',
-                            id: 4
-                        }
-                    ]
+                async getProjects(): Promise<IProject[]> {
+                    return await Project.query();
                 }
             }
         })
