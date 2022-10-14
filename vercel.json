@@ -1,0 +1,9 @@
+{
+  "builds": [
+    {
+      "src": "moleculer.config.js",
+      "use": "@vercel/node",
+      "config": {}
+    }
+  ]
+}
