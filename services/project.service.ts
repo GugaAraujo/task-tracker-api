@@ -31,6 +31,19 @@ export default class ProjectService extends Service {
                         return await this.getProjectById(ctx.params?.id);
                     },
                 },
+                create: {
+                    rest: {
+                        method: 'POST',
+                        path: '/'
+                    },
+                    params: {
+                        name: 'string',
+                    },
+                    /** @param {Context} ctx  */
+                    async handler(ctx): Promise<IProject> {
+                        return await this.create(ctx.params);
+                    }
+                },
                 renameProject: {
                     rest: {
                         method: 'PUT',
@@ -58,6 +71,11 @@ export default class ProjectService extends Service {
                     }
                     return project;
                 },
+                async create(projectData: IProject): Promise<IProject> {
+                    const createdProject = await Project.query()
+                        .insert({ ...projectData });
+                    return createdProject;
+                },
                 async renameProject(projectId: string, name: string): Promise<IProject> {
                     const project = await Project.query().findById(projectId);
 
@@ -67,7 +85,7 @@ export default class ProjectService extends Service {
 
                     const renamedProject = await project.$query().patchAndFetch({ name });
                     return renamedProject;
-                }
+                },
             }
         })
     }

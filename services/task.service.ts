@@ -30,6 +30,22 @@ export default class TaskService extends Service {
                         return await this.getTaskById(ctx.params?.id);
                     }
                 },
+                create: {
+                    rest: {
+                        method: 'POST',
+                        path: '/'
+                    },
+                    params: {
+                        description: 'string',
+                        duration: 'number',
+                        project_id: 'number',
+                        project_name: 'string',
+                    },
+                    /** @param {Context} ctx  */
+                    async handler(ctx): Promise<ITask> {
+                        return await this.create(ctx.params);
+                    }
+                },
                 renameTask: {
                     rest: {
                         method: 'PUT',
@@ -57,6 +73,13 @@ export default class TaskService extends Service {
                     }
                     return task;
                 },
+                async create(taskData: ITask): Promise<ITask> {
+                    const createdTask = await Task.query().insert({
+                        ...taskData,
+                        created_at: new Date,
+                    });
+                    return createdTask;
+                },
                 async renameTask(taskId: string, description: string): Promise<ITask> {
                     const task = await Task.query().findById(taskId);
 
@@ -66,7 +89,7 @@ export default class TaskService extends Service {
 
                     const renamedTask = await task.$query().patchAndFetch({description});
                     return renamedTask;
-                }
+                },
             }
         })
     }
