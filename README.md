@@ -10,7 +10,7 @@ This API is developed with Node.Js, using Moleculer Framework.
 * Use TypeScript ✅
 * Create Task and Project Interfaces ✅
 * create Task and Project endpoints ◻️
-* connect data with PostgreSQL ◻️
+* connect data with PostgreSQL ✅
 * connect data with Task-Tracker Project ◻️
 * Implement tests with Jest ◻️
 
