@@ -29,19 +29,43 @@ export default class TaskService extends Service {
                     async handler(ctx): Promise<ITask> {
                         return await this.getTaskById(ctx.params?.id);
                     }
+                },
+                renameTask: {
+                    rest: {
+                        method: 'PUT',
+                        path: '/:id',
+                    },
+                    params: {
+                        id: 'string',
+                        description: 'string',
+                    },
+                    /** @param {Context} ctx  */
+                    async handler(ctx): Promise<ITask> {
+                        return await this.renameTask(ctx.params?.id, ctx.params?.description);
+                    }
                 }
             },
             methods: {
                 async getTasks(): Promise<ITask[]> {
                     return await Task.query();
                 },
-                async getTaskById(taskId: string): Promise<ITask>{
+                async getTaskById(taskId: string): Promise<ITask> {
                     const task = await Task.query().findById(taskId);
 
                     if (!task) {
                         throw new Errors.MoleculerClientError('Task not found', 404);
                     }
                     return task;
+                },
+                async renameTask(taskId: string, description: string): Promise<ITask> {
+                    const task = await Task.query().findById(taskId);
+
+                    if (!task) {
+                        throw new Errors.MoleculerClientError('Task not found', 404);
+                    }
+
+                    const renamedTask = await task.$query().patchAndFetch({description});
+                    return renamedTask;
                 }
             }
         })
