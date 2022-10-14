@@ -7,6 +7,8 @@ export class Task extends Model {
 
     public description!: string;
 
+    public duration!: number;
+
     public project_id!: number;
 
     public project_name!: string;
