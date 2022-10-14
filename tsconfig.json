@@ -9,7 +9,8 @@
         "pretty": true,
         "target": "es6",
         "strict": true,
-        "outDir": "dist"
+        "outDir": "dist",
+        "skipLibCheck": true
     },
     "include": ["./**/*"],
     "exclude": ["node_modules"],
