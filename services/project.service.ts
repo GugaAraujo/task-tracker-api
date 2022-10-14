@@ -59,10 +59,23 @@ export default class ProjectService extends Service {
                         return await this.renameProject(ctx.params?.id, ctx.params?.name);
                     },
                 },
+                delete: {
+                    rest: {
+                        method: 'DELETE',
+                        path: '/:id',
+                    },
+                    params: {
+                        id: 'string',
+                    },
+                    /** @param {Context} ctx  */
+                    async handler(ctx): Promise<IProject> {
+                        return await this.delete(ctx.params?.id);
+                    }
+                },
             },
             methods: {
                 async getProjects(): Promise<IProject[]> {
-                    return await Project.query();
+                    return await Project.query().where('deleted_at', null);
                 },
                 async getProjectById(projectId: string): Promise<IProject> {
                     const project = await Project.query().findById(projectId);
@@ -86,6 +99,19 @@ export default class ProjectService extends Service {
 
                     const renamedProject = await project.$query().patchAndFetch({ name });
                     return renamedProject;
+                },
+                async delete(projectId: string): Promise<IProject> {
+                    const project = await Project.query().findById(projectId);
+
+                    if (!project) {
+                        throw new Errors.MoleculerClientError('Project not found', 404);
+                    }
+
+                    const deletedProject = await project.$query()
+                        .patchAndFetch({
+                            deleted_at: new Date,
+                        });
+                    return deletedProject;
                 },
             }
         })

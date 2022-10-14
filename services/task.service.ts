@@ -59,11 +59,24 @@ export default class TaskService extends Service {
                     async handler(ctx): Promise<ITask> {
                         return await this.renameTask(ctx.params?.id, ctx.params?.description);
                     }
-                }
+                },
+                delete: {
+                    rest: {
+                        method: 'DELETE',
+                        path: '/:id',
+                    },
+                    params: {
+                        id: 'string',
+                    },
+                    /** @param {Context} ctx  */
+                    async handler(ctx): Promise<ITask> {
+                        return await this.delete(ctx.params?.id);
+                    }
+                },
             },
             methods: {
                 async getTasks(): Promise<ITask[]> {
-                    return await Task.query();
+                    return await Task.query().where('deleted_at', null);
                 },
                 async getTaskById(taskId: string): Promise<ITask> {
                     const task = await Task.query().findById(taskId);
@@ -89,6 +102,19 @@ export default class TaskService extends Service {
 
                     const renamedTask = await task.$query().patchAndFetch({description});
                     return renamedTask;
+                },
+                async delete(taskId: string): Promise<ITask> {
+                    const task = await Task.query().findById(taskId);
+
+                    if (!task) {
+                        throw new Errors.MoleculerClientError('Task not found', 404);
+                    }
+
+                    const deletedTask = await task.$query()
+                        .patchAndFetch({
+                            deleted_at: new Date,
+                        });
+                    return deletedTask;
                 },
             }
         })

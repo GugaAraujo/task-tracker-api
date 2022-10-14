@@ -6,6 +6,8 @@ export class Project extends Model {
     public id!: number;
 
     public name!: string;
+
+    public deleted_at!: Date;
 }
 
 export type IProject = ModelObject<Project> | undefined;
