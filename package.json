@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+    "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "build": "tsc --build tsconfig.json",
     "dev": "ts-node ./node_modules/moleculer/bin/moleculer-runner.js -e --hot --config moleculer.config.ts **/*.service.ts",
-    "start": "node node_modules/moleculer/bin/moleculer-runner.js -e dist/services/**/*.service.js"
+    "start": "moleculer-runner -e --config dist/moleculer.config.js  **/*.service.js"
   },
   "author": "",
   "license": "ISC",
