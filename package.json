@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc --build tsconfig.json",
     "dev": "ts-node ./node_modules/moleculer/bin/moleculer-runner.js -e --hot --config moleculer.config.ts **/*.service.ts",
-    "start": "moleculer-runner --instances=max services"
+    "start:prod": "moleculer-runner -e dist/services"
   },
   "author": "",
   "license": "ISC",
