@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-    "engines": {
+  "engines": {
     "node": ">=14"
   },
   "scripts": {
@@ -17,6 +17,7 @@
     "dotenv": "^16.0.3",
     "knex": "^2.3.0",
     "moleculer": "^0.14.24",
+    "moleculer-repl": "^0.7.3",
     "moleculer-web": "^0.10.4",
     "objection": "^3.0.1",
     "pg": "^8.8.0"
