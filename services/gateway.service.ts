@@ -12,9 +12,9 @@ export default class ApiService extends Service {
                     // Configures the Access-Control-Allow-Origin CORS header.
                     origin: '*',
                     // Configures the Access-Control-Allow-Methods CORS header.
-                    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+                    methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'DELETE'],
                     // Configures the Access-Control-Allow-Headers CORS header.
-                    allowedHeaders: [],
+                    allowedHeaders: '*',
                     // Configures the Access-Control-Expose-Headers CORS header.
                     exposedHeaders: [],
                     // Configures the Access-Control-Allow-Credentials CORS header.
