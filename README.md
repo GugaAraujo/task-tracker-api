@@ -1,20 +1,27 @@
-# Task-Tracker API
+# ⏳ Task-Tracker API
 
-This will be the next API for the Task-Tracker Project. <br>
-This API is developed with Node.Js, using Moleculer Framework.
+This project is the API for the Task-Tracker Project. <br>
+This API was developed with Node.Js, using Moleculer Framework, Knex, Objection and PostGres Database.
+
+#### [Task-Tracker](https://task-tracker-vue.vercel.app/#/)
+Task-traker is a task controller, with runtime accounting.<br>
+Using Vue 3, Vuex, Bulma and AmCharts.
+
+[Task-Tracker repository](https://github.com/GugaAraujo/task-tracker)
 
 ### 🚧 Project in progress
 
 ## 📝 To Do
 
-* Use TypeScript ✅
-* Create Task and Project Interfaces ✅
-* create Task and Project endpoints ✅
-* connect data with PostgreSQL ✅
-* connect data with Task-Tracker Project ◻️
+* Use TypeScript ☑️
+* Create Task and Project Interfaces ☑️
+* Create Task and Project endpoints ☑️
+* Connect data with PostgreSQL ☑️
+* Connect data with Task-Tracker Project ☑️
+* Create a container ◻️
 * Implement tests with Jest ◻️
 
-## Build Setup
+## Setup
 
 ```bash
 # install dependencies
@@ -23,5 +30,3 @@ $ npm install
 # serve with hot reload at localhost:3000
 $ npm run dev
 ```
-
-[Task-Tracker](https://task-tracker-vue.vercel.app/#/)
