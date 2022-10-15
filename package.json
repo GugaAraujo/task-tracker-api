@@ -11,7 +11,7 @@
     "build": "tsc --build tsconfig.json",
     "dev": "ts-node ./node_modules/moleculer/bin/moleculer-runner.js -e --hot --config moleculer.config.ts **/*.service.ts",
     "start": "moleculer-runner -e dist/services",
-    "heroku-postbuild": "NODE_ENV=dev npm install — omit — no-shrinkwrap && npm run build"
+    "heroku-postbuild": "NODE_ENV=dev npm install --omit --no-shrinkwrap && npm run build"
   },
   "author": "",
   "license": "ISC",
