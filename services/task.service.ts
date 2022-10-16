@@ -39,6 +39,24 @@ export default class TaskService extends Service {
                         return await this.getProjectNameCount();
                     }
                 },
+                getDurationSum: {
+                    rest: {
+                        method: 'GET',
+                        path: '/sum/duration'
+                    },
+                    async handler(): Promise<any> {
+                        return await this.getDurationSum();
+                    }
+                },
+                getLongestTask: {
+                    rest: {
+                        method: 'GET',
+                        path: '/longest'
+                    },
+                    async handler(): Promise<any> {
+                        return await this.getLongestTask();
+                    }
+                },
                 create: {
                     rest: {
                         method: 'POST',
@@ -85,10 +103,12 @@ export default class TaskService extends Service {
             },
             methods: {
                 async getTasks(): Promise<ITask[]> {
-                    return await Task.query().where('deleted_at', null);
+                    return await Task.query()
+                        .where('deleted_at', null);
                 },
                 async getTaskById(taskId: string): Promise<ITask> {
-                    const task = await Task.query().findById(taskId);
+                    const task = await Task.query()
+                        .findById(taskId);
 
                     if (!task) {
                         throw new Errors.MoleculerClientError('Task not found', 404);
@@ -96,7 +116,24 @@ export default class TaskService extends Service {
                     return task;
                 },
                 async getProjectNameCount(): Promise<any[]> {
-                    return await Task.query().select('project_name').where('deleted_at', null).groupBy('project_name').count('project_name', { as: 'quantity' });
+                    return await Task.query()
+                        .select('project_name')
+                        .where('deleted_at', null)
+                        .groupBy('project_name')
+                        .count('project_name', { as: 'quantity' });
+                },
+                async getDurationSum(): Promise<any> {
+                    const sum = await Task.query()
+                        .where('deleted_at', null)
+                        .sum('duration as total');
+                    return sum[0];
+                },
+                async getLongestTask(): Promise<any> {
+                    return await Task.query()
+                        .select('description', 'duration')
+                        .where('deleted_at', null)
+                        .orderBy('duration', 'desc')
+                        .first();
                 },
                 async create(taskData: ITask): Promise<ITask> {
                     const createdTask = await Task.query().insert({
@@ -106,17 +143,20 @@ export default class TaskService extends Service {
                     return createdTask;
                 },
                 async renameTask(taskId: string, description: string): Promise<ITask> {
-                    const task = await Task.query().findById(taskId);
+                    const task = await Task.query()
+                        .findById(taskId);
 
                     if (!task) {
                         throw new Errors.MoleculerClientError('Task not found', 404);
                     }
 
-                    const renamedTask = await task.$query().patchAndFetch({description});
+                    const renamedTask = await task.$query()
+                        .patchAndFetch({ description });
                     return renamedTask;
                 },
                 async delete(taskId: string): Promise<ITask> {
-                    const task = await Task.query().findById(taskId);
+                    const task = await Task.query()
+                        .findById(taskId);
 
                     if (!task) {
                         throw new Errors.MoleculerClientError('Task not found', 404);
