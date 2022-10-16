@@ -30,6 +30,15 @@ export default class TaskService extends Service {
                         return await this.getTaskById(ctx.params?.id);
                     }
                 },
+                getProjectNameCount: {
+                    rest: {
+                        method: 'GET',
+                        path: '/count/project'
+                    },
+                    async handler(): Promise<any[]> {
+                        return await this.getProjectNameCount();
+                    }
+                },
                 create: {
                     rest: {
                         method: 'POST',
@@ -85,6 +94,9 @@ export default class TaskService extends Service {
                         throw new Errors.MoleculerClientError('Task not found', 404);
                     }
                     return task;
+                },
+                async getProjectNameCount(): Promise<any[]> {
+                    return await Task.query().select('project_name').where('deleted_at', null).groupBy('project_name').count('project_name', { as: 'quantity' });
                 },
                 async create(taskData: ITask): Promise<ITask> {
                     const createdTask = await Task.query().insert({
