@@ -13,8 +13,12 @@ export default class TaskService extends Service {
                         method: 'GET',
                         path: '/'
                     },
-                    async handler(): Promise<ITask[]> {
-                        return await this.getTasks();
+                    params: {
+                        filter: { type: 'string', optional: true },
+                    },
+                    /** @param {Context} ctx  */
+                    async handler(ctx): Promise<ITask[]> {
+                        return await this.getTasks(ctx.params?.filter);
                     }
                 },
                 getTaskById: {
@@ -102,9 +106,14 @@ export default class TaskService extends Service {
                 },
             },
             methods: {
-                async getTasks(): Promise<ITask[]> {
+                async getTasks(filter): Promise<ITask[]> {
+                    if (filter) {
+                        return await Task.query()
+                            .whereRaw('LOWER(description) LIKE ?', '%' + filter.toLowerCase() + '%')
+                            .whereNull('deleted_at');
+                    }
                     return await Task.query()
-                        .where('deleted_at', null);
+                        .whereNull('deleted_at');
                 },
                 async getTaskById(taskId: string): Promise<ITask> {
                     const task = await Task.query()
@@ -118,20 +127,20 @@ export default class TaskService extends Service {
                 async getProjectNameCount(): Promise<any[]> {
                     return await Task.query()
                         .select('project_name')
-                        .where('deleted_at', null)
+                        .whereNull('deleted_at')
                         .groupBy('project_name')
                         .count('project_name', { as: 'quantity' });
                 },
                 async getDurationSum(): Promise<any> {
                     const sum = await Task.query()
-                        .where('deleted_at', null)
+                        .whereNull('deleted_at')
                         .sum('duration as total');
                     return sum[0];
                 },
                 async getLongestTask(): Promise<any> {
                     return await Task.query()
                         .select('description', 'duration')
-                        .where('deleted_at', null)
+                        .whereNull('deleted_at')
                         .orderBy('duration', 'desc')
                         .first();
                 },
