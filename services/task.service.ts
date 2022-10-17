@@ -107,12 +107,11 @@ export default class TaskService extends Service {
             },
             methods: {
                 async getTasks(filter): Promise<ITask[]> {
-                    if (filter) {
-                        return await Task.query()
-                            .whereRaw('LOWER(description) LIKE ?', '%' + filter.toLowerCase() + '%')
-                            .whereNull('deleted_at');
-                    }
                     return await Task.query()
+                        .select('id', 'description', 'duration', 'project_id', 'project_name')
+                        .whereRaw('LOWER(description) LIKE ?', '%' + filter.toLowerCase() + '%')
+                        .orderBy('created_at', 'desc')
+                        .orderBy('id', 'desc')
                         .whereNull('deleted_at');
                 },
                 async getTaskById(taskId: string): Promise<ITask> {
