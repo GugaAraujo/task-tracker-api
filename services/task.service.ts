@@ -13,8 +13,12 @@ export default class TaskService extends Service {
                         method: 'GET',
                         path: '/'
                     },
-                    async handler(): Promise<ITask[]> {
-                        return await this.getTasks();
+                    params: {
+                        filter: { type: 'string', optional: true },
+                    },
+                    /** @param {Context} ctx  */
+                    async handler(ctx): Promise<ITask[]> {
+                        return await this.getTasks(ctx.params?.filter);
                     }
                 },
                 getTaskById: {
@@ -28,6 +32,33 @@ export default class TaskService extends Service {
                     /** @param {Context} ctx  */
                     async handler(ctx): Promise<ITask> {
                         return await this.getTaskById(ctx.params?.id);
+                    }
+                },
+                getProjectNameCount: {
+                    rest: {
+                        method: 'GET',
+                        path: '/count/project'
+                    },
+                    async handler(): Promise<any[]> {
+                        return await this.getProjectNameCount();
+                    }
+                },
+                getDurationSum: {
+                    rest: {
+                        method: 'GET',
+                        path: '/sum/duration'
+                    },
+                    async handler(): Promise<any> {
+                        return await this.getDurationSum();
+                    }
+                },
+                getLongestTask: {
+                    rest: {
+                        method: 'GET',
+                        path: '/longest'
+                    },
+                    async handler(): Promise<any> {
+                        return await this.getLongestTask();
                     }
                 },
                 create: {
@@ -75,16 +106,43 @@ export default class TaskService extends Service {
                 },
             },
             methods: {
-                async getTasks(): Promise<ITask[]> {
-                    return await Task.query().where('deleted_at', null);
+                async getTasks(filter): Promise<ITask[]> {
+                    if (filter) {
+                        return await Task.query()
+                            .whereRaw('LOWER(description) LIKE ?', '%' + filter.toLowerCase() + '%')
+                            .whereNull('deleted_at');
+                    }
+                    return await Task.query()
+                        .whereNull('deleted_at');
                 },
                 async getTaskById(taskId: string): Promise<ITask> {
-                    const task = await Task.query().findById(taskId);
+                    const task = await Task.query()
+                        .findById(taskId);
 
                     if (!task) {
                         throw new Errors.MoleculerClientError('Task not found', 404);
                     }
                     return task;
+                },
+                async getProjectNameCount(): Promise<any[]> {
+                    return await Task.query()
+                        .select('project_name')
+                        .whereNull('deleted_at')
+                        .groupBy('project_name')
+                        .count('project_name', { as: 'quantity' });
+                },
+                async getDurationSum(): Promise<any> {
+                    const sum = await Task.query()
+                        .whereNull('deleted_at')
+                        .sum('duration as total');
+                    return sum[0];
+                },
+                async getLongestTask(): Promise<any> {
+                    return await Task.query()
+                        .select('description', 'duration')
+                        .whereNull('deleted_at')
+                        .orderBy('duration', 'desc')
+                        .first();
                 },
                 async create(taskData: ITask): Promise<ITask> {
                     const createdTask = await Task.query().insert({
@@ -94,17 +152,20 @@ export default class TaskService extends Service {
                     return createdTask;
                 },
                 async renameTask(taskId: string, description: string): Promise<ITask> {
-                    const task = await Task.query().findById(taskId);
+                    const task = await Task.query()
+                        .findById(taskId);
 
                     if (!task) {
                         throw new Errors.MoleculerClientError('Task not found', 404);
                     }
 
-                    const renamedTask = await task.$query().patchAndFetch({description});
+                    const renamedTask = await task.$query()
+                        .patchAndFetch({ description });
                     return renamedTask;
                 },
                 async delete(taskId: string): Promise<ITask> {
-                    const task = await Task.query().findById(taskId);
+                    const task = await Task.query()
+                        .findById(taskId);
 
                     if (!task) {
                         throw new Errors.MoleculerClientError('Task not found', 404);
