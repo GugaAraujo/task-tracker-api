@@ -113,7 +113,6 @@ export default class TaskService extends Service {
                         .orderBy('created_at', 'desc')
                         .orderBy('id', 'desc')
                         .whereNull('deleted_at');
-
                 },
                 async getTaskById(taskId: string): Promise<ITask> {
                     const task = await Task.query()
