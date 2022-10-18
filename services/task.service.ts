@@ -34,13 +34,31 @@ export default class TaskService extends Service {
                         return await this.getTaskById(ctx.params?.id);
                     }
                 },
-                getProjectNameCount: {
+                getCountByProjectName: {
                     rest: {
                         method: 'GET',
                         path: '/count/project'
                     },
                     async handler(): Promise<any[]> {
-                        return await this.getProjectNameCount();
+                        return await this.getCountByProjectName();
+                    }
+                },
+                getCountByCreated: {
+                    rest: {
+                        method: 'GET',
+                        path: '/count/created'
+                    },
+                    async handler(): Promise<any[]> {
+                        return await this.getCountByCreated();
+                    }
+                },
+                getSumByCreated: {
+                    rest: {
+                        method: 'GET',
+                        path: '/sum/created'
+                    },
+                    async handler(): Promise<any[]> {
+                        return await this.getSumByCreated();
                     }
                 },
                 getDurationSum: {
@@ -130,12 +148,26 @@ export default class TaskService extends Service {
                     }
                     return task;
                 },
-                async getProjectNameCount(): Promise<any[]> {
+                async getCountByProjectName(): Promise<any[]> {
                     return await Task.query()
                         .select('project_name')
                         .whereNull('deleted_at')
                         .groupBy('project_name')
                         .count('project_name', { as: 'quantity' });
+                },
+                async getSumByCreated(): Promise<any[]> {
+                    return await Task.query()
+                        .select('created_at')
+                        .whereNull('deleted_at')
+                        .groupBy('created_at')
+                        .sum('duration as total');
+                },
+                async getCountByCreated(): Promise<any[]> {
+                    return await Task.query()
+                        .select('created_at')
+                        .whereNull('deleted_at')
+                        .groupBy('created_at')
+                        .count('created_at', { as: 'count' });
                 },
                 async getDurationSum(): Promise<any> {
                     const sum = await Task.query()
