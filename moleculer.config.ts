@@ -2,7 +2,7 @@
 
 import { BrokerOptions } from 'moleculer';
 const brokerConfig: BrokerOptions = {
-    namespace: 'moleculer',
+    namespace: 'Task-Tracker-API',
     transporter: 'TCP',
 };
 

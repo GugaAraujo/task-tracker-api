@@ -1,11 +1,11 @@
 # ⏳ Task-Tracker API
 
 This project is the API for the Task-Tracker Project. <br>
-This API was developed with Node.Js, using Moleculer Framework, Knex, Objection and PostGres Database.
+This API was developed with Node.Js, using Moleculer Framework, Knex, Objection and PostgreSQL Database.
 
 #### [Task-Tracker](https://task-tracker-vue.vercel.app/#/)
-Task-traker is a task controller, with runtime accounting.<br>
-Using Vue 3, Vuex, Bulma and AmCharts.
+Task-traker is a task controller, with runtime accounting,<br>
+using Vue 3, Vuex, Bulma and AmCharts.
 
 [Task-Tracker repository](https://github.com/GugaAraujo/task-tracker)
 

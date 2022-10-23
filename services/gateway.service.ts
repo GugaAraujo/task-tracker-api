@@ -25,11 +25,23 @@ export default class ApiService extends Service {
                 port: process.env.PORT || 3355,
                 routes: [
                     {
-                        path: '/',
+                        path: '/api',
                         whitelist: ['**'],
                         autoAliases: true,
-                    }
-                ]
+
+                        // Mapping policy setting. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Mapping-policy
+                        mappingPolicy: "all", // Available values: "all", "restrict"
+
+                        // Enable/disable logging
+                        logging: true
+                    },
+                ],
+                assets: {
+                    folder: "public",
+
+                    // Options to `server-static` module
+                    options: {}
+                }
             }
         })
     }
