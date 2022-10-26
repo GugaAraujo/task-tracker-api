@@ -18,7 +18,8 @@ using Vue 3, Vuex, Bulma and AmCharts.
 * Create Task and Project endpoints ☑️
 * Connect data with PostgreSQL ☑️
 * Connect data with Task-Tracker Project ☑️
-* implement API documentation (similar to swagger) ☑️
+* Implement API documentation (similar to swagger) ☑️
+* Review typing ◻️
 * Create a container ◻️
 * Implement tests with Jest ◻️
 
