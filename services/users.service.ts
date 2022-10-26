@@ -74,26 +74,30 @@ module.exports = {
             async handler(ctx: any): Promise<any> {
                 const { email, password } = ctx.params;
                 let { token } = ctx.params;
+                
+                try {
+                    const user: IUser = await User.query().findOne({ email });
+                    if (!user)
+                        throw new MoleculerClientError("wrong email!", 422, "", [{ field: "email", message: "is not found" }]);
 
-                const user: IUser = await User.query().findOne({ email });
-                if (!user)
-                    throw new MoleculerClientError("wrong email!", 422, "", [{ field: "email", message: "is not found" }]);
+                    const res = await bcrypt.compare(password, user.password);
+                    if (!res)
+                        throw new MoleculerClientError("Wrong password!", 422, "", [{ field: "password", message: "is incorrect" }]);
 
-                const res = await bcrypt.compare(password, user.password);
-                if (!res)
-                    throw new MoleculerClientError("Wrong password!", 422, "", [{ field: "password", message: "is incorrect" }]);
+                    const today = new Date();
+                    const exp = new Date(today);
+                    exp.setDate(today.getDate() + 60);
 
-                const today = new Date();
-                const exp = new Date(today);
-                exp.setDate(today.getDate() + 60);
+                    token = jwt.sign({
+                        id: user.id,
+                        email: email,
+                        exp: Math.floor(exp.getTime() / 1000)
+                    }, process.env.JWT_SECRET as string);
 
-                token = jwt.sign({
-                    id: user.id,
-                    email: email,
-                    exp: Math.floor(exp.getTime() / 1000)
-                }, process.env.JWT_SECRET as string);
-
-                return { token };
+                    return { token };
+                } catch (error: any) {
+                    throw new MoleculerClientError("Internal error", 500, error.code, error);
+                }
             }
         },
 
