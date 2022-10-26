@@ -10,6 +10,7 @@ export default class ProjectService extends Service {
             name: 'project',
             actions: {
                 getProjects: {
+                    auth: "required",
                     rest: {
                         method: 'GET',
                         path: '/'
@@ -19,6 +20,7 @@ export default class ProjectService extends Service {
                     },
                 },
                 getProjectById: {
+                    auth: "required",
                     rest: {
                         method: 'GET',
                         path: '/:id',
@@ -32,6 +34,7 @@ export default class ProjectService extends Service {
                     },
                 },
                 create: {
+                    auth: "required",
                     rest: {
                         method: 'POST',
                         path: '/'
@@ -45,6 +48,7 @@ export default class ProjectService extends Service {
                     }
                 },
                 renameProject: {
+                    auth: "required",
                     rest: {
                         method: 'PUT',
                         path: '/:id',
@@ -59,6 +63,7 @@ export default class ProjectService extends Service {
                     },
                 },
                 delete: {
+                    auth: "required",
                     rest: {
                         method: 'DELETE',
                         path: '/:id',

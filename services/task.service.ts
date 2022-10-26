@@ -9,6 +9,7 @@ export default class TaskService extends Service {
             name: 'task',
             actions: {
                 getTasks: {
+                    auth: "required",
                     rest: {
                         method: 'GET',
                         path: '/'
@@ -22,6 +23,7 @@ export default class TaskService extends Service {
                     }
                 },
                 getTaskById: {
+                    auth: "required",
                     rest: {
                         method: 'GET',
                         path: '/:id',
@@ -35,6 +37,7 @@ export default class TaskService extends Service {
                     }
                 },
                 getCountByProjectName: {
+                    auth: "required",
                     rest: {
                         method: 'GET',
                         path: '/count/project'
@@ -44,6 +47,7 @@ export default class TaskService extends Service {
                     }
                 },
                 getCountByCreated: {
+                    auth: "required",
                     rest: {
                         method: 'GET',
                         path: '/count/created'
@@ -53,6 +57,7 @@ export default class TaskService extends Service {
                     }
                 },
                 getSumByCreated: {
+                    auth: "required",
                     rest: {
                         method: 'GET',
                         path: '/sum/created'
@@ -62,6 +67,7 @@ export default class TaskService extends Service {
                     }
                 },
                 getDurationSum: {
+                    auth: "required",
                     rest: {
                         method: 'GET',
                         path: '/sum/duration'
@@ -71,6 +77,7 @@ export default class TaskService extends Service {
                     }
                 },
                 getLongestTask: {
+                    auth: "required",
                     rest: {
                         method: 'GET',
                         path: '/longest'
@@ -80,6 +87,7 @@ export default class TaskService extends Service {
                     }
                 },
                 create: {
+                    auth: "required",
                     rest: {
                         method: 'POST',
                         path: '/'
@@ -96,6 +104,7 @@ export default class TaskService extends Service {
                     }
                 },
                 renameTask: {
+                    auth: "required",
                     rest: {
                         method: 'PUT',
                         path: '/:id',
@@ -110,6 +119,7 @@ export default class TaskService extends Service {
                     }
                 },
                 delete: {
+                    auth: "required",
                     rest: {
                         method: 'DELETE',
                         path: '/:id',
