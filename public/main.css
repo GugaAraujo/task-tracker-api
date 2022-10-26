@@ -21,7 +21,7 @@ body {
 header, footer {
     text-align: center;
     color: white;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
 }
 
 header a, header a.router-link-exact-active,
@@ -31,17 +31,17 @@ footer a, footer a.router-link-exact-active
 }
 
 header {
-    background-image: linear-gradient(45deg, #e37682 0%, #5f4d93 100%);
-    padding: 1em;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.6);
+    background-image: linear-gradient(180deg, #1692a8 0%, #5f91b0 100%);
+    padding: .5em;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.6);
     margin-bottom: 1em;
 }
 
 footer {
-    background-image: linear-gradient(135deg, #e37682 0%, #5f4d93 100%);
+    background-image: linear-gradient(360deg, #1692a8 0%, #5f91b0 100%);
     padding: 0.75em;
     font-size: 0.8em;
-    box-shadow: 0 -3px 10px rgba(0,0,0,0.6);
+    box-shadow: 0 -1px 5px rgba(0,0,0,0.6);
     position: fixed;
     left: 0; right: 0; bottom: 0;
     margin-top: 1em;
@@ -273,6 +273,9 @@ button:hover, .button:hover {
 }
 
 code {
+    display: block;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
     font-family: "Consolas", 'Courier New', Courier, monospace;
     color: #555;
 }
@@ -363,7 +366,7 @@ main fieldset .content {
 }
 
 main fieldset .action-card {
-    
+
 }
 
 .action-card {
@@ -374,7 +377,7 @@ main fieldset .action-card {
     margin-top: .2em;
     border: 1px solid lightgrey;
     border-radius: 4px;
-    
+
 }
 
 .action-card.expand {
@@ -418,18 +421,18 @@ main fieldset .action-card {
 
 
 .action-card-section-parameters{
-    
-    
+
+
 }
 .action-card-section-parameters-header{
     background-color: #fbfbfbbb;
     padding: 8px;
     display: flex;justify-items: center;align-items: center;flex-direction: row;	flex: 1;
-    
+
 }
 .action-card-section-parameters-body{
     padding: 8px;
-    
+
 }
 
 .action-card-section-response{
@@ -597,7 +600,7 @@ input[required]:invalid {
     border: 1px solid rgb(161, 54, 54);
     border-radius: 4px;
     padding: 4px;
-    
+
 }
 
 input[required]:after{
@@ -892,7 +895,7 @@ input[required]:after{
     border-radius: 4px;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
     z-index: 1000;
-    
+
 }
 
 .modal .modal-header{
@@ -902,7 +905,7 @@ input[required]:after{
 .modal .modal-content{
     height: 100%;
     padding: 16px;
-    
+
 }
 .modal .modal-actions{
     border-top: 1px solid #e5e5e5;

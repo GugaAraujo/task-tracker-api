@@ -267,27 +267,23 @@
 				</div>
 				<div class="modal-content">
 					<fieldset>
-						<legend>Authorize by username and password</legend>
+						<legend>Authorize by Email and password</legend>
 						<div class="flex column">
 							<div class="form-group">
-								<label>Username</label>
-								<input type="text" v-model="auth.username" class="form-control" placeholder="Username">
+								<label>Email</label><br>
+								<input type="text" v-model="auth.email" class="form-control" placeholder="Email">
 							</div>
 							<div class="form-group">
-								<label>Password</label>
+								<label>Password</label><br>
 								<input type="password"  v-model="auth.password" class="form-control" placeholder="Password">
 							</div>
-							<div class="form-group">
-								<label>Tenant</label>
-								<input type="text" v-model="auth.tenant" class="form-control" placeholder="Tenant">
-							</div>
-							<button class="self-end button outlined positive" @click="authorize">Authorize</button>
+							<button class="m-b-sm m-t-md button outlined positive" @click="authorize">Authorize</button>
 						</div>
 					</fieldset>
 
 					<div class="form-group">
 						<label>Token</label>
-						<textarea style="height:100px;width: 100%;" v-model="auth.token" class="form-control" placeholder="Token" ></textarea>
+						<textarea style="height:100px;width:96%;" v-model="auth.token" class="form-control" placeholder="Token" ></textarea>
 					</div>
 
 				</div>
@@ -320,14 +316,12 @@
 					},
 					openAuthorizeDialog: false,
 					auth: {
-						    tenant:"",
-							username: "",
+							email: "",
 							password: "",
 							token: ""
 						},
 						globalAuth:{
-							tenant:"",
-							username: "",
+							email: "",
 							password: "",
 							token: ""
 						},
@@ -370,8 +364,7 @@
 			methods: {
 				resetAuthorization() {
 					this.auth = {
-						    tenant:"",
-							username: "",
+							email: "",
 							password: "",
 							token: ""
 						};
@@ -379,7 +372,7 @@
 				},
 
 				authorize() {
-					fetch("/api/v1/identity/auth/signin",{
+					fetch("/api/users/login",{
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json"
@@ -389,11 +382,10 @@
 					}).then(res => {
 						if (res.status == 401) {
 							this.openAuthorizeDialog = true;
-							alert("Invalid username or password");
+							alert("Invalid Email or password");
 						} else if (res.status == 200) {
 							res.json().then(data => {
 								this.auth.token = res.headers.get("Authorization") || data.token;
-								this.auth.tenant = res.headers.get("x-tenant-id") || data.tenant;
 								// this.saveAuthorize();
 							});
 						}
@@ -591,13 +583,9 @@
 
 					}
 					const authtoken = this.globalAuth.token;
-					const tenant = this.globalAuth.tenant;
 					const authHeader = {};
 					if(authtoken){
 						authHeader['Authorization'] = `Bearer ${authtoken}`;
-					}
-					if(tenant){
-						authHeader["x-tenant"] = tenant;
 					}
 					return fetch(url, {
 						method,
