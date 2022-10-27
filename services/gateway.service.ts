@@ -7,7 +7,7 @@ export default class ApiService extends Service {
     public constructor(broker: ServiceBroker) {
         super(broker);
         this.parseServiceSchema({
-            name: 'api',
+            name: 'gateway',
             mixins: [ApiGateway],
             settings: {
                 cors: {

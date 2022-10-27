@@ -114,7 +114,7 @@
 							<div :class="`action-card action-method-${item.rest.method.toLocaleLowerCase()} `" v-for="item,ix in section" :key="ix" >
 								<div class="action-card-header" @click="item.expand=!item.expand">
 									<span :class="`badge lg fixed text-center text-code bg-method-${item.rest.method.toLocaleLowerCase()} `"> {{ item.rest.method }}</span>
-									<span class="text-subtitle2 m-x-xs">{{ item.rest.path }}</span>
+									<span class="text-subtitle2 m-x-xs">{{ item.rest.url }}</span>
 									<div class="flex-spacer"></div>
 									<span class="text-caption m-x-xs">{{ item.action }}</span>
 									<span class="badge m-x-xs">{{ item.fields.length }}</span>

@@ -31,7 +31,9 @@ module.exports = {
         create: {
             rest: "POST /create",
             params: {
-                email: { type: 'email' },
+                $$strict: true,
+                username: { type: 'string' },
+                email: { type: 'email', trim: true},
                 password: 'string|min:6|max:8',
                 confirmPwd: 'string|min:6|max:8',
                 agreeTerms: { type: "boolean", value: 'true', strict: true }
@@ -49,6 +51,7 @@ module.exports = {
 
                 return await bcrypt.hash(ctx.params?.password, 10).then(async (res: any) => {
                     await User.query().insert({
+                        username: ctx.params?.username,
                         email: ctx.params?.email,
                         password: res,
                     });
@@ -68,13 +71,15 @@ module.exports = {
         login: {
             rest: "POST /login",
             params: {
+                $$strict: true,
                 email: { type: "email" },
-                password: { type: "string", min: 6 },
+                password: 'string|min:6|max:8',
+                token: { type: 'string', optional: true }
             },
             async handler(ctx: any): Promise<any> {
                 const { email, password } = ctx.params;
                 let { token } = ctx.params;
-                
+
                 try {
                     const user: IUser = await User.query().findOne({ email });
                     if (!user)
