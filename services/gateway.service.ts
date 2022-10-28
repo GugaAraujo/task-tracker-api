@@ -81,7 +81,7 @@ export default class ApiService extends Service {
                     }
 
                     if (req.$action.auth == "required" && !user)
-                        throw new UnAuthorizedError('a', 10);
+                        throw new UnAuthorizedError('Unauthorized', 401);
                 }
             }
         })

@@ -2,7 +2,8 @@
 
 import { IUser, User } from "../models/user";
 
-const { MoleculerClientError } = require("moleculer").Errors;
+
+const { MoleculerClientError, MoleculerError } = require("moleculer").Errors;
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
@@ -83,11 +84,11 @@ module.exports = {
                 try {
                     const user: IUser = await User.query().findOne({ email });
                     if (!user)
-                        throw new MoleculerClientError("wrong email!", 422, "", [{ field: "email", message: "is not found" }]);
+                        throw new MoleculerClientError("Email is not found", 401);
 
                     const res = await bcrypt.compare(password, user.password);
                     if (!res)
-                        throw new MoleculerClientError("Wrong password!", 422, "", [{ field: "password", message: "is incorrect" }]);
+                        throw new MoleculerClientError("Password incorrect", 401);
 
                     const today = new Date();
                     const exp = new Date(today);
@@ -101,7 +102,7 @@ module.exports = {
 
                     return { token };
                 } catch (error: any) {
-                    throw new MoleculerClientError("Internal error", 500, error.code, error);
+                    throw new MoleculerError(error.message, error.code);
                 }
             }
         },
