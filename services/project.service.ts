@@ -5,26 +5,19 @@ import { IProject } from '../models/project';
 export default class ProjectService extends Service {
     public constructor(broker: ServiceBroker) {
         super(broker);
-
         this.parseServiceSchema({
             name: 'project',
             actions: {
                 getProjects: {
-                    auth: "required",
-                    rest: {
-                        method: 'GET',
-                        path: '/'
-                    },
+                    auth: 'required',
+                    rest: 'GET /all',
                     async handler(): Promise<IProject[]> {
                         return await this.getProjects();
                     },
                 },
                 getProjectById: {
-                    auth: "required",
-                    rest: {
-                        method: 'GET',
-                        path: '/:id',
-                    },
+                    auth: 'required',
+                    rest: 'GET /:id',
                     params: {
                         id: 'string',
                     },
@@ -34,11 +27,8 @@ export default class ProjectService extends Service {
                     },
                 },
                 create: {
-                    auth: "required",
-                    rest: {
-                        method: 'POST',
-                        path: '/'
-                    },
+                    auth: 'required',
+                    rest:'POST /create',
                     params: {
                         name: 'string',
                     },
@@ -48,11 +38,8 @@ export default class ProjectService extends Service {
                     }
                 },
                 renameProject: {
-                    auth: "required",
-                    rest: {
-                        method: 'PUT',
-                        path: '/:id',
-                    },
+                    auth: 'required',
+                    rest: 'PUT /edit/:id',
                     params: {
                         id: 'string',
                         name: 'string'
@@ -63,11 +50,8 @@ export default class ProjectService extends Service {
                     },
                 },
                 delete: {
-                    auth: "required",
-                    rest: {
-                        method: 'DELETE',
-                        path: '/:id',
-                    },
+                    auth: 'required',
+                    rest: 'DELETE /delete/:id',
                     params: {
                         id: 'string',
                     },
