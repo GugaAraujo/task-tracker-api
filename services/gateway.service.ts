@@ -1,11 +1,13 @@
 import { Service, ServiceBroker } from 'moleculer';
 import ApiGateway from 'moleculer-web';
+const _ = require("lodash");
+const { UnAuthorizedError } = ApiGateway.Errors;
 
 export default class ApiService extends Service {
     public constructor(broker: ServiceBroker) {
         super(broker);
         this.parseServiceSchema({
-            name: 'api',
+            name: 'gateway',
             mixins: [ApiGateway],
             settings: {
                 cors: {
@@ -25,11 +27,62 @@ export default class ApiService extends Service {
                 port: process.env.PORT || 3355,
                 routes: [
                     {
-                        path: '/',
+                        authorization: true,
+                        path: '/api',
                         whitelist: ['**'],
                         autoAliases: true,
+
+                        // Mapping policy setting. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Mapping-policy
+                        mappingPolicy: "all", // Available values: "all", "restrict"
+
+                        // Enable/disable logging
+                        logging: true
+                    },
+                ],
+                assets: {
+                    folder: "public",
+
+                    // Options to `server-static` module
+                    options: {}
+                }
+            },
+            methods: {
+                /**
+                 * Authorize the request
+                 *
+                 * @param {Context} ctx
+                 * @param {Object} route
+                 * @param {IncomingRequest} req
+                 * @returns {Promise}
+                 */
+                async authorize(ctx, route, req) {
+                    let token;
+                    if (req.headers.authorization) {
+                        let type = req.headers.authorization.split(" ")[0];
+                        if (type === "Token" || type === "Bearer")
+                            token = req.headers.authorization.split(" ")[1];
                     }
-                ]
+
+                    let user;
+                    if (token) {
+                        // Verify JWT token
+                        try {
+                            user = await ctx.call("users.resolveToken", { token });
+                            if (user) {
+                                this.logger.info("Authenticated via JWT: ", user.email);
+                                // Reduce user fields (it will be transferred to other nodes)
+                                ctx.meta.user = _.pick(user, ["id", "email"]);
+                                ctx.meta.token = token;
+                                ctx.meta.userID = user.id;
+                            }
+                        } catch (err) {
+                            // Ignored because we continue processing if user doesn't exists
+                        }
+                    }
+
+                    if (req.$action.auth == "required" && !user)
+                        throw new UnAuthorizedError('Unauthorized', 401);
+                }
             }
         })
     }

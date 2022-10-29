@@ -9,10 +9,8 @@ export default class TaskService extends Service {
             name: 'task',
             actions: {
                 getTasks: {
-                    rest: {
-                        method: 'GET',
-                        path: '/'
-                    },
+                    auth: 'required',
+                    rest: 'GET /all',
                     params: {
                         filter: { type: 'string', optional: true },
                     },
@@ -22,10 +20,8 @@ export default class TaskService extends Service {
                     }
                 },
                 getTaskById: {
-                    rest: {
-                        method: 'GET',
-                        path: '/:id',
-                    },
+                    auth: 'required',
+                    rest: 'GET /:id',
                     params: {
                         id: 'string',
                     },
@@ -34,56 +30,9 @@ export default class TaskService extends Service {
                         return await this.getTaskById(ctx.params?.id);
                     }
                 },
-                getCountByProjectName: {
-                    rest: {
-                        method: 'GET',
-                        path: '/count/project'
-                    },
-                    async handler(): Promise<any[]> {
-                        return await this.getCountByProjectName();
-                    }
-                },
-                getCountByCreated: {
-                    rest: {
-                        method: 'GET',
-                        path: '/count/created'
-                    },
-                    async handler(): Promise<any[]> {
-                        return await this.getCountByCreated();
-                    }
-                },
-                getSumByCreated: {
-                    rest: {
-                        method: 'GET',
-                        path: '/sum/created'
-                    },
-                    async handler(): Promise<any[]> {
-                        return await this.getSumByCreated();
-                    }
-                },
-                getDurationSum: {
-                    rest: {
-                        method: 'GET',
-                        path: '/sum/duration'
-                    },
-                    async handler(): Promise<any> {
-                        return await this.getDurationSum();
-                    }
-                },
-                getLongestTask: {
-                    rest: {
-                        method: 'GET',
-                        path: '/longest'
-                    },
-                    async handler(): Promise<any> {
-                        return await this.getLongestTask();
-                    }
-                },
                 create: {
-                    rest: {
-                        method: 'POST',
-                        path: '/'
-                    },
+                    auth: 'required',
+                    rest: 'POST /create',
                     params: {
                         description: 'string',
                         duration: 'number',
@@ -96,10 +45,8 @@ export default class TaskService extends Service {
                     }
                 },
                 renameTask: {
-                    rest: {
-                        method: 'PUT',
-                        path: '/:id',
-                    },
+                    auth: 'required',
+                    rest: 'PUT /edit/:id',
                     params: {
                         id: 'string',
                         description: 'string',
@@ -110,10 +57,8 @@ export default class TaskService extends Service {
                     }
                 },
                 delete: {
-                    rest: {
-                        method: 'DELETE',
-                        path: '/:id',
-                    },
+                    auth: 'required',
+                    rest: 'DELETE /delete/:id',
                     params: {
                         id: 'string',
                     },
@@ -147,40 +92,6 @@ export default class TaskService extends Service {
                         throw new Errors.MoleculerClientError('Task not found', 404);
                     }
                     return task;
-                },
-                async getCountByProjectName(): Promise<any[]> {
-                    return await Task.query()
-                        .select('project_name')
-                        .whereNull('deleted_at')
-                        .groupBy('project_name')
-                        .count('project_name', { as: 'quantity' });
-                },
-                async getSumByCreated(): Promise<any[]> {
-                    return await Task.query()
-                        .select('created_at')
-                        .whereNull('deleted_at')
-                        .groupBy('created_at')
-                        .sum('duration as total');
-                },
-                async getCountByCreated(): Promise<any[]> {
-                    return await Task.query()
-                        .select('created_at')
-                        .whereNull('deleted_at')
-                        .groupBy('created_at')
-                        .count('created_at', { as: 'count' });
-                },
-                async getDurationSum(): Promise<any> {
-                    const sum = await Task.query()
-                        .whereNull('deleted_at')
-                        .sum('duration as total');
-                    return sum[0];
-                },
-                async getLongestTask(): Promise<any> {
-                    return await Task.query()
-                        .select('description', 'duration')
-                        .whereNull('deleted_at')
-                        .orderBy('duration', 'desc')
-                        .first();
                 },
                 async create(taskData: ITask): Promise<ITask> {
                     const createdTask = await Task.query().insert({

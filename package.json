@@ -9,15 +9,18 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.json",
-    "dev": "ts-node ./node_modules/moleculer/bin/moleculer-runner.js -e --hot --config moleculer.config.ts **/*.service.ts",
+    "dev": "ts-node ./node_modules/moleculer/bin/moleculer-runner.js -e --repl --hot --config moleculer.config.ts **/*.service.ts",
     "start": "moleculer-runner -e dist/services",
     "heroku-postbuild": "NODE_ENV=dev npm install --omit --no-shrinkwrap && npm run build"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.0.3",
+    "jsonwebtoken": "^8.5.1",
     "knex": "^2.3.0",
+    "lodash": "^4.17.21",
     "moleculer": "^0.14.24",
     "moleculer-repl": "^0.7.3",
     "moleculer-web": "^0.10.4",
@@ -25,6 +28,8 @@
     "pg": "^8.8.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^18.8.5",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
