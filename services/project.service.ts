@@ -11,8 +11,8 @@ export default class ProjectService extends Service {
                 getProjects: {
                     auth: 'required',
                     rest: 'GET /all',
-                    async handler(): Promise<IProject[]> {
-                        return await this.getProjects();
+                    async handler(ctx): Promise<IProject[]> {
+                        return await this.getProjects(ctx.meta.user?.id);
                     },
                 },
                 getProjectById: {
@@ -23,7 +23,7 @@ export default class ProjectService extends Service {
                     },
                     /** @param {Context} ctx */
                     async handler(ctx): Promise<IProject> {
-                        return await this.getProjectById(ctx.params?.id);
+                        return await this.getProjectById(ctx.meta.user?.id, ctx.params?.id);
                     },
                 },
                 create: {
@@ -34,7 +34,7 @@ export default class ProjectService extends Service {
                     },
                     /** @param {Context} ctx  */
                     async handler(ctx): Promise<IProject> {
-                        return await this.create(ctx.params);
+                        return await this.create(ctx.params?.name, ctx);
                     }
                 },
                 renameProject: {
@@ -46,7 +46,7 @@ export default class ProjectService extends Service {
                     },
                     /** @param {Context} ctx */
                     async handler(ctx): Promise<IProject> {
-                        return await this.renameProject(ctx.params?.id, ctx.params?.name);
+                        return await this.renameProject(ctx.meta.user?.id, ctx.params?.id, ctx.params?.name);
                     },
                 },
                 delete: {
@@ -57,29 +57,39 @@ export default class ProjectService extends Service {
                     },
                     /** @param {Context} ctx  */
                     async handler(ctx): Promise<IProject> {
-                        return await this.delete(ctx.params?.id);
+                        return await this.delete(ctx.meta.user?.id, ctx.params?.id);
                     }
                 },
             },
             methods: {
-                async getProjects(): Promise<IProject[]> {
-                    return await Project.query().where('deleted_at', null);
+                async getProjects(userId): Promise<IProject[]> {
+                    return await Project.query()
+                        .where('user_id', '=', userId)
+                        .where('deleted_at', null);
                 },
-                async getProjectById(projectId: string): Promise<IProject> {
-                    const project = await Project.query().findById(projectId);
+                async getProjectById(userId, projectId: string): Promise<IProject> {
+                    const project = await Project.query()
+                        .findById(projectId)
+                        .where('user_id', '=', userId);
 
                     if (!project) {
                         throw new Errors.MoleculerClientError('Project not found', 404);
                     }
                     return project;
                 },
-                async create(projectData: IProject): Promise<IProject> {
+                async create(name, ctx: any): Promise<IProject> {
                     const createdProject = await Project.query()
-                        .insert({ ...projectData });
+                        .insert({
+                            name,
+                            created_at: new Date,
+                            user_id: ctx.meta.user?.id,
+                        });
                     return createdProject;
                 },
-                async renameProject(projectId: string, name: string): Promise<IProject> {
-                    const project = await Project.query().findById(projectId);
+                async renameProject(userId, projectId: string, name: string): Promise<IProject> {
+                    const project = await Project.query()
+                        .findById(projectId)
+                        .where('user_id', '=', userId);
 
                     if (!project) {
                         throw new Errors.MoleculerClientError('Project not found', 404);
@@ -88,8 +98,10 @@ export default class ProjectService extends Service {
                     const renamedProject = await project.$query().patchAndFetch({ name });
                     return renamedProject;
                 },
-                async delete(projectId: string): Promise<IProject> {
-                    const project = await Project.query().findById(projectId);
+                async delete(userId, projectId: string): Promise<IProject> {
+                    const project = await Project.query()
+                        .findById(projectId)
+                        .where('user_id', '=', userId);
 
                     if (!project) {
                         throw new Errors.MoleculerClientError('Project not found', 404);

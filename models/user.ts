@@ -12,6 +12,8 @@ export class User extends Model {
     public password!: string;
 
     public token!: string;
+
+    public first_access!: boolean;
 }
 
 export type IUser = ModelObject<User> | undefined;

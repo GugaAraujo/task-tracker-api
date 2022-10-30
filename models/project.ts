@@ -7,6 +7,10 @@ export class Project extends Model {
 
     public name!: string;
 
+    public user_id!: string;
+
+    public created_at!: Date;
+
     public deleted_at!: Date;
 }
 
