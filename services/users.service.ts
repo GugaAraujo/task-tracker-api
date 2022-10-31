@@ -19,6 +19,21 @@ export default class ProjectService extends Service {
              */
             actions: {
                 /**
+                 * Get first_access value
+                 *
+                 * @actions
+                 *
+                 * @returns {Boolean}
+                 */
+                firstAccess: {
+                    auth: 'required',
+                    rest: "GET /first_access",
+                    async handler(ctx: any): Promise<any> {
+                        return await this.firstAccess(ctx);
+                    }
+                },
+
+                /**
                  * Login with username & password
                  *
                  * @actions
@@ -114,6 +129,10 @@ export default class ProjectService extends Service {
                 },
             },
             methods: {
+                async firstAccess(ctx) {
+                    const user = await User.query().findById(ctx.meta.userID);
+                    return { data: user?.first_access };
+                },
                 async login(ctx) {
                     const { email, password } = ctx.params;
                     let { token } = ctx.params;
