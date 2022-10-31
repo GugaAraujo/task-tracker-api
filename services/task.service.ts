@@ -16,7 +16,7 @@ export default class TaskService extends Service {
                     },
                     /** @param {Context} ctx  */
                     async handler(ctx): Promise<ITask[]> {
-                        return await this.getTasks(ctx.params?.filter);
+                        return await this.getTasks(ctx.meta.user?.id, ctx.params?.filter);
                     }
                 },
                 getTaskById: {
@@ -27,7 +27,7 @@ export default class TaskService extends Service {
                     },
                     /** @param {Context} ctx  */
                     async handler(ctx): Promise<ITask> {
-                        return await this.getTaskById(ctx.params?.id);
+                        return await this.getTaskById(ctx.meta.user?.id, ctx.params?.id);
                     }
                 },
                 create: {
@@ -41,7 +41,7 @@ export default class TaskService extends Service {
                     },
                     /** @param {Context} ctx  */
                     async handler(ctx): Promise<ITask> {
-                        return await this.create(ctx.params);
+                        return await this.create(ctx.params, ctx);
                     }
                 },
                 renameTask: {
@@ -53,7 +53,7 @@ export default class TaskService extends Service {
                     },
                     /** @param {Context} ctx  */
                     async handler(ctx): Promise<ITask> {
-                        return await this.renameTask(ctx.params?.id, ctx.params?.description);
+                        return await this.renameTask(ctx.meta.user?.id, ctx.params?.id, ctx.params?.description);
                     }
                 },
                 delete: {
@@ -64,16 +64,17 @@ export default class TaskService extends Service {
                     },
                     /** @param {Context} ctx  */
                     async handler(ctx): Promise<ITask> {
-                        return await this.delete(ctx.params?.id);
+                        return await this.delete(ctx.meta.user?.id, ctx.params?.id);
                     }
                 },
             },
             methods: {
-                async getTasks(filter): Promise<ITask[]> {
+                async getTasks(userId, filter): Promise<ITask[]> {
                     if (filter) {
                         return await Task.query()
-                            .select('id', 'description', 'duration', 'project_id', 'project_name')
+                            .select('id', 'description', 'duration', 'project_id', 'project_name', 'user_id')
                             .whereRaw('LOWER(description) LIKE ?', '%' + filter.toLowerCase() + '%')
+                            .where('user_id', '=', userId)
                             .orderBy('created_at', 'desc')
                             .orderBy('id', 'desc')
                             .whereNull('deleted_at');
@@ -82,27 +83,31 @@ export default class TaskService extends Service {
                         .select('id', 'description', 'duration', 'project_id', 'project_name')
                         .orderBy('created_at', 'desc')
                         .orderBy('id', 'desc')
+                        .where('user_id', '=', userId)
                         .whereNull('deleted_at');
                 },
-                async getTaskById(taskId: string): Promise<ITask> {
+                async getTaskById(userId,taskId: string): Promise<ITask> {
                     const task = await Task.query()
-                        .findById(taskId);
+                        .findById(taskId)
+                        .where('user_id', '=', userId);
 
                     if (!task) {
                         throw new Errors.MoleculerClientError('Task not found', 404);
                     }
                     return task;
                 },
-                async create(taskData: ITask): Promise<ITask> {
+                async create(task,ctx): Promise<ITask> {
                     const createdTask = await Task.query().insert({
-                        ...taskData,
+                        ...task,
+                        user_id: ctx.meta.user?.id,
                         created_at: new Date,
                     });
                     return createdTask;
                 },
-                async renameTask(taskId: string, description: string): Promise<ITask> {
+                async renameTask(userId, taskId: string, description: string): Promise<ITask> {
                     const task = await Task.query()
-                        .findById(taskId);
+                        .findById(taskId)
+                        .where('user_id', '=', userId);
 
                     if (!task) {
                         throw new Errors.MoleculerClientError('Task not found', 404);
@@ -112,9 +117,10 @@ export default class TaskService extends Service {
                         .patchAndFetch({ description });
                     return renamedTask;
                 },
-                async delete(taskId: string): Promise<ITask> {
+                async delete(userId, taskId: string): Promise<ITask> {
                     const task = await Task.query()
-                        .findById(taskId);
+                        .findById(taskId)
+                        .where('user_id', '=', userId);
 
                     if (!task) {
                         throw new Errors.MoleculerClientError('Task not found', 404);

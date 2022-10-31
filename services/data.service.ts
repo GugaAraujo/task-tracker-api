@@ -12,70 +12,75 @@ export default class TaskService extends Service {
                 getCountByProjectName: {
                     auth: 'required',
                     rest: 'GET /count/name',
-                    async handler(): Promise<any[]> {
-                        return await this.getCountByProjectName();
+                    async handler(ctx): Promise<any[]> {
+                        return await this.getCountByProjectName(ctx.meta.user?.id);
                     }
                 },
                 getCountByCreated: {
                     auth: 'required',
                     rest: 'GET /count/created',
-                    async handler(): Promise<any[]> {
-                        return await this.getCountByCreated();
+                    async handler(ctx): Promise<any[]> {
+                        return await this.getCountByCreated(ctx.meta.user?.id);
                     }
                 },
                 getSumByCreated: {
                     auth: 'required',
                     rest:'GET /sum/created',
-                    async handler(): Promise<any[]> {
-                        return await this.getSumByCreated();
+                    async handler(ctx): Promise<any[]> {
+                        return await this.getSumByCreated(ctx.meta.user?.id);
                     }
                 },
                 getDurationSum: {
                     auth: 'required',
                     rest: 'GET /sum/duration',
-                    async handler(): Promise<any> {
-                        return await this.getDurationSum();
+                    async handler(ctx): Promise<any> {
+                        return await this.getDurationSum(ctx.meta.user?.id);
                     }
                 },
                 getLongestTask: {
                     auth: 'required',
                     rest:'GET /longest/task',
-                    async handler(): Promise<any> {
-                        return await this.getLongestTask();
+                    async handler(ctx): Promise<any> {
+                        return await this.getLongestTask(ctx.meta.user?.id);
                     }
                 },
             },
             methods: {
-                async getCountByProjectName(): Promise<any[]> {
+                async getCountByProjectName(userId): Promise<any[]> {
                     return await Task.query()
                         .select('project_name')
+                        .where('user_id', '=', userId)
                         .whereNull('deleted_at')
                         .groupBy('project_name')
                         .count('project_name', { as: 'quantity' });
                 },
-                async getSumByCreated(): Promise<any[]> {
+                async getSumByCreated(userId): Promise<any[]> {
                     return await Task.query()
                         .select('created_at')
+                        .where('user_id', '=', userId)
                         .whereNull('deleted_at')
                         .groupBy('created_at')
                         .sum('duration as total');
                 },
-                async getCountByCreated(): Promise<any[]> {
+                async getCountByCreated(userId): Promise<any[]> {
                     return await Task.query()
                         .select('created_at')
+                        .where('user_id', '=', userId)
                         .whereNull('deleted_at')
                         .groupBy('created_at')
                         .count('created_at', { as: 'count' });
                 },
-                async getDurationSum(): Promise<any> {
+                async getDurationSum(userId): Promise<any> {
                     const sum = await Task.query()
-                        .whereNull('deleted_at')
+                    .where('user_id', '=', userId)
+                    .whereNull('deleted_at')
                         .sum('duration as total');
                     return sum[0];
                 },
-                async getLongestTask(): Promise<any> {
+                async getLongestTask(userId): Promise<any> {
                     return await Task.query()
                         .select('description', 'duration')
+                        .where('user_id', '=', userId)
                         .whereNull('deleted_at')
                         .orderBy('duration', 'desc')
                         .first();
