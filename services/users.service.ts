@@ -19,6 +19,21 @@ export default class ProjectService extends Service {
              */
             actions: {
                 /**
+                 * Get first_access value
+                 *
+                 * @actions
+                 *
+                 * @returns {Boolean}
+                 */
+                firstAccess: {
+                    auth: 'required',
+                    rest: "GET /first_access",
+                    async handler(ctx: any): Promise<any> {
+                        return await this.firstAccess(ctx);
+                    }
+                },
+
+                /**
                  * Login with username & password
                  *
                  * @actions
@@ -69,11 +84,11 @@ export default class ProjectService extends Service {
                 *
                 * @returns {Object} user entity
                 */
-                removeFirstAccessStatus: {
+                removeFirstAccess: {
                     auth: 'required',
-                    rest: "PUT /remove_first_acess",
+                    rest: "PUT /remove_first_access",
                     async handler(ctx: any): Promise<any> {
-                        return await this.removeFirstAccessStatus(ctx);
+                        return await this.removeFirstAccess(ctx);
                     }
                 },
 
@@ -114,6 +129,10 @@ export default class ProjectService extends Service {
                 },
             },
             methods: {
+                async firstAccess(ctx) {
+                    const user = await User.query().findById(ctx.meta.userID);
+                    return { data: user?.first_access };
+                },
                 async login(ctx) {
                     const { email, password } = ctx.params;
                     let { token } = ctx.params;
@@ -129,7 +148,7 @@ export default class ProjectService extends Service {
 
                         token = await this.generateToken(user.id, email);
 
-                        return { token };
+                        return { token, username: user?.username };
                     } catch (error: any) {
                         throw new MoleculerError(error.message, error.code);
                     }
@@ -200,7 +219,7 @@ export default class ProjectService extends Service {
                         project_name: createdFrontendProject.name,
                     }, ctx);
 
-                    await this.removeFirstAccessStatus(ctx);
+                    await this.removeFirstAccess(ctx);
 
                     return {
                         message: 'created',
@@ -229,7 +248,7 @@ export default class ProjectService extends Service {
                         return await User.query().findById(decoded.id)
                     }
                 },
-                async removeFirstAccessStatus(ctx) {
+                async removeFirstAccess(ctx) {
                     const user = await User.query()
                         .patchAndFetchById(ctx.meta.user.id, {
                             first_access: false,
