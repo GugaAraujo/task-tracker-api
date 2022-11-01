@@ -1,5 +1,6 @@
 import { Service, ServiceBroker } from 'moleculer';
 import ApiGateway from 'moleculer-web';
+import { User } from '../data';
 const _ = require("lodash");
 const { UnAuthorizedError } = ApiGateway.Errors;
 
@@ -69,9 +70,11 @@ export default class ApiService extends Service {
                         try {
                             user = await ctx.call("users.resolveToken", { token });
                             if (user) {
+                                User.query().findById(user.id);
                                 this.logger.info("Authenticated via JWT: ", user.email);
                                 // Reduce user fields (it will be transferred to other nodes)
                                 ctx.meta.user = _.pick(user, ["id", "email"]);
+                                ctx.meta.user.username = user.username;
                                 ctx.meta.token = token;
                                 ctx.meta.userID = user.id;
                             }
