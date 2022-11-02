@@ -215,8 +215,8 @@ export default class ProjectService extends Service {
                     const createdTypescriptTask = await ctx.call('task.create', {
                         description: 'Estudo de Typescript',
                         duration: 2076,
-                        project_id: createdFrontendProject.id,
-                        project_name: createdFrontendProject.name,
+                        project_id: createdFullstackProject.id,
+                        project_name: createdFullstackProject.name,
                     }, ctx);
 
                     await this.removeFirstAccess(ctx);
